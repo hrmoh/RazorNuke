@@ -1,4 +1,6 @@
-﻿namespace RazorNuke.Models
+﻿using RSecurityBackend.Models.Auth.Db;
+
+namespace RazorNuke.Models
 {
     public class RazorNukePage
     {
@@ -66,6 +68,16 @@
         /// create date
         /// </summary>
         public DateTime CreateDate { get; set; }
+
+        /// <summary>
+        /// create user id
+        /// </summary>
+        public Guid CreateUserId { get; set; }
+
+        /// <summary>
+        /// create uer
+        /// </summary>
+        public required RAppUser CreateUser { get; set; }
 
         /// <summary>
         /// last modified
