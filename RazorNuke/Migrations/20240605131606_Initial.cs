@@ -382,6 +382,41 @@ namespace RazorNuke.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
+                    PageOrder = table.Column<int>(type: "int", nullable: false),
+                    Published = table.Column<bool>(type: "bit", nullable: false),
+                    TitleInMenu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlSlug = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HtmlText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlainText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Pages_AspNetUsers_CreateUserId",
+                        column: x => x.CreateUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Pages_Pages_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Pages",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RWSUsers",
                 columns: table => new
                 {
@@ -525,6 +560,41 @@ namespace RazorNuke.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PageSnapshots",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PageId = table.Column<int>(type: "int", nullable: false),
+                    MadeObsoleteByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RecordDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PageOrder = table.Column<int>(type: "int", nullable: false),
+                    Published = table.Column<bool>(type: "bit", nullable: false),
+                    TitleInMenu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlSlug = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HtmlText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlainText = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PageSnapshots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PageSnapshots_AspNetUsers_MadeObsoleteByUserId",
+                        column: x => x.MadeObsoleteByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PageSnapshots_Pages_PageId",
+                        column: x => x.PageId,
+                        principalTable: "Pages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -585,6 +655,26 @@ namespace RazorNuke.Migrations
                 columns: new[] { "RAppUserId", "Name" },
                 unique: true,
                 filter: "[RAppUserId] IS NOT NULL AND [Name] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pages_CreateUserId",
+                table: "Pages",
+                column: "CreateUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pages_ParentId",
+                table: "Pages",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PageSnapshots_MadeObsoleteByUserId",
+                table: "PageSnapshots",
+                column: "MadeObsoleteByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PageSnapshots_PageId",
+                table: "PageSnapshots",
+                column: "PageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions_RAppRoleId",
@@ -691,6 +781,9 @@ namespace RazorNuke.Migrations
                 name: "Options");
 
             migrationBuilder.DropTable(
+                name: "PageSnapshots");
+
+            migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
@@ -713,6 +806,9 @@ namespace RazorNuke.Migrations
 
             migrationBuilder.DropTable(
                 name: "WorkspaceUserInvitations");
+
+            migrationBuilder.DropTable(
+                name: "Pages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

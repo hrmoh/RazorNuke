@@ -72,12 +72,12 @@ namespace RazorNuke.Models
         /// <summary>
         /// create user id
         /// </summary>
-        public Guid CreateUserId { get; set; }
+        public Guid? CreateUserId { get; set; }
 
         /// <summary>
         /// create uer
         /// </summary>
-        public required RAppUser CreateUser { get; set; }
+        public virtual RAppUser? CreateUser { get; set; }
 
         /// <summary>
         /// last modified

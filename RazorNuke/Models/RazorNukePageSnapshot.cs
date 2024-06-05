@@ -25,12 +25,12 @@ namespace RazorNuke.Models
         /// <summary>
         /// id - this record is then modified by this user and made obsolete
         /// </summary>
-        public Guid MadeObsoleteByUserId { get; set; }
+        public Guid? MadeObsoleteByUserId { get; set; }
 
         /// <summary>
         /// this record is then modified by this user and made obsolete
         /// </summary>
-        public required RAppUser MadeObsoleteByUser { get; set; }
+        public virtual RAppUser? MadeObsoleteByUser { get; set; }
 
         /// <summary>
         /// record date
