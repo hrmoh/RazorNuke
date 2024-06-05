@@ -1,22 +1,45 @@
 using Audit.WebApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using RazorNuke.DbContext;
 using RSecurityBackend.Authorization;
 using RSecurityBackend.DbContext;
 using RSecurityBackend.Models.Auth.Db;
+using RSecurityBackend.Models.Auth.Memory;
 using RSecurityBackend.Models.Mail;
 using RSecurityBackend.Services;
 using RSecurityBackend.Services.Implementation;
 using RSecurityBackend.Utilities;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+
+
+// Add service and create Policy with options
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("RServiceCorsPolicy",
+        builder => builder.SetIsOriginAllowed(_ => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithExposedHeaders("paging-headers")
+        .AllowCredentials()
+        );
+});
 
 builder.Services.AddDbContextPool<RDbContext>(
                         options => options.UseSqlServer(
@@ -75,8 +98,69 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddHttpClient();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "bearer";
+}).AddJwtBearer("bearer", options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false,
+        ValidAudience = "Everyone",
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration.GetSection("RSecurityBackend")["ApplicationName"],
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"{builder.Configuration.GetSection("Security")["Secret"]}")),
+
+        ValidateLifetime = true, //validate the expiration and not before values in the token
+
+        ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            {
+                context.Response.Headers.Append("Token-Expired", "true");
+            }
+            return Task.CompletedTask;
+        }
+    };
+
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    //this is the default policy to make sure the use session has not yet been deleted by him/her from another client
+    //or by an admin (Authorize with no policy should fail on deleted sessions)
+    var defPolicy = new AuthorizationPolicyBuilder();
+    defPolicy.Requirements.Add(new UserGroupPermissionRequirement("null", "null"));
+    options.DefaultPolicy = defPolicy.Build();
+
+
+    foreach (SecurableItem Item in SecurableItem.Items)
+    {
+        foreach (SecurableItemOperation Operation in Item.Operations)
+        {
+            options.AddPolicy($"{Item.ShortName}:{Operation.ShortName}", policy => policy.Requirements.Add(new UserGroupPermissionRequirement(Item.ShortName, Operation.ShortName)));
+        }
+    }
+    foreach (SecurableItem Item in SecurableItem.WorkspaceItems)
+    {
+        foreach (SecurableItemOperation Operation in Item.Operations)
+        {
+            options.AddPolicy($"{Item.ShortName}:{Operation.ShortName}", policy => policy.Requirements.Add(new UserGroupPermissionRequirement(Item.ShortName, Operation.ShortName)));
+        }
+    }
+});
+
+
 //IHttpContextAccessor
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
 //authorization handler
 builder.Services.AddScoped<IAuthorizationHandler, UserGroupPermissionHandler>();
@@ -134,6 +218,8 @@ builder.Services.Configure<IISServerOptions>(options =>
 
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+
 
 
 var app = builder.Build();
