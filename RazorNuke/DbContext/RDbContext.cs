@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RazorNuke.Models;
 using RSecurityBackend.DbContext;
 using RSecurityBackend.Models.Auth.Db;
 
@@ -25,12 +26,22 @@ namespace RazorNuke.DbContext
         }
 
         /// <summary>
-        /// 
+        /// indexing and ...
         /// </summary>
         /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
         }
+
+        /// <summary>
+        /// pages
+        /// </summary>
+        public DbSet<RazorNukePage> Pages { get; set; }
+
+        /// <summary>
+        /// page snapshots
+        /// </summary>
+        public DbSet<RazorNukePageSnapshot> PageSnapshots { get; set; }
     }
 }
