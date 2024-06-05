@@ -1,20 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RSecurityBackend.Services;
 
 namespace RazorNuke.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        public int UserCount { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        protected readonly IAppUserService _usersService;
+
+        public IndexModel(IAppUserService usersService)
         {
-            _logger = logger;
+            _usersService = usersService;
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-
+            var res = await _usersService.GetAllUsersInformation(new RSecurityBackend.Models.Generic.PagingParameterModel() { PageNumber = 1, PageSize = 20 }, string.Empty, string.Empty);
+            if(string.IsNullOrEmpty(res.ExceptionString))
+            {
+                UserCount = res.Result.Items.Length + 1;
+            }
+            return Page();
         }
     }
 }
