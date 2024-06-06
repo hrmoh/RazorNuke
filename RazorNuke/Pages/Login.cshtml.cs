@@ -26,33 +26,30 @@ namespace RazorNuke.Pages
                 return BadRequest();
             }
 
-            using (HttpClient client = new HttpClient())
+            LoginViewModel.ClientAppName = "RazorNuke";
+            LoginViewModel.Language = "fa-IR";
+
+            string clientIPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            RServiceResult<LoggedOnUserModel> res = await _service.Login(LoginViewModel, clientIPAddress);
+            if (res.Result == null)
             {
-                LoginViewModel.ClientAppName = "RazorNuke";
-                LoginViewModel.Language = "fa-IR";
-
-                string clientIPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                RServiceResult<LoggedOnUserModel> res = await _service.Login(LoginViewModel, clientIPAddress);
-                if (res.Result == null)
-                {
-                    ViewData["FatalError"] = res.ExceptionString;
-                    return Page();
-                }
-
-                LoggedOnUserModel loggedOnUser = res.Result;
-
-                var cookieOption = new CookieOptions()
-                {
-                    Expires = DateTime.Now.AddDays(365),
-                };
-
-                Response.Cookies.Append("UserId", loggedOnUser.User.Id.ToString(), cookieOption);
-                Response.Cookies.Append("SessionId", loggedOnUser.SessionId.ToString(), cookieOption);
-                Response.Cookies.Append("Token", loggedOnUser.Token, cookieOption);
-                Response.Cookies.Append("Username", loggedOnUser.User.Username, cookieOption);
-                Response.Cookies.Append("Name", $"{loggedOnUser.User.FirstName} {loggedOnUser.User.SureName}", cookieOption);
-                Response.Cookies.Append("NickName", $"{loggedOnUser.User.NickName}", cookieOption);
+                ViewData["FatalError"] = res.ExceptionString;
+                return Page();
             }
+
+            LoggedOnUserModel loggedOnUser = res.Result;
+
+            var cookieOption = new CookieOptions()
+            {
+                Expires = DateTime.Now.AddDays(365),
+            };
+
+            Response.Cookies.Append("UserId", loggedOnUser.User.Id.ToString(), cookieOption);
+            Response.Cookies.Append("SessionId", loggedOnUser.SessionId.ToString(), cookieOption);
+            Response.Cookies.Append("Token", loggedOnUser.Token, cookieOption);
+            Response.Cookies.Append("Username", loggedOnUser.User.Username, cookieOption);
+            Response.Cookies.Append("Name", $"{loggedOnUser.User.FirstName} {loggedOnUser.User.SureName}", cookieOption);
+            Response.Cookies.Append("NickName", $"{loggedOnUser.User.NickName}", cookieOption);
 
             return Redirect("/");
         }
