@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using RazorNuke.DbContext;
+using RazorNuke.Services;
+using RazorNuke.Services.Implementation;
 using RSecurityBackend.Authorization;
 using RSecurityBackend.DbContext;
 using RSecurityBackend.Models.Auth.Db;
@@ -212,6 +214,9 @@ builder.Services.AddTransient<ILongRunningJobProgressService, LongRunningJobProg
 
 //generic options service
 builder.Services.AddTransient<IRGenericOptionsService, RGenericOptionsServiceEF>();
+
+//razor pages service
+builder.Services.AddTransient<IRazorNukePageService, RazorNukePageService>();
 
 //upload limit for IIS
 builder.Services.Configure<IISServerOptions>(options =>

@@ -5,7 +5,7 @@ using RSecurityBackend.Models.Generic;
 
 namespace RazorNuke.Services.Implementation
 {
-    public class RazorNukePageService
+    public class RazorNukePageService : IRazorNukePageService
     {
 
         /// <summary>
