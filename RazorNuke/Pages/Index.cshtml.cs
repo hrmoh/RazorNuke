@@ -7,20 +7,34 @@ namespace RazorNuke.Pages
 {
     public class IndexModel : PageModel
     {
-        public RazorNukePage? RazorNukePage { get; set; }
-        public string FatalError { get; set; } = string.Empty;
+        public RazorNukePage? CurrentPage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
-            var res = await _pagesService.GetByUrlAsync(Request.Path);
-            if (!string.IsNullOrEmpty(res.ExceptionString))
+            var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null);
+            if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
             {
-                FatalError = res.ExceptionString;
+                ViewData["FatalError"] = resMenuTopLevelPages.ExceptionString;
+                return Page();
             }
-            if (res.Result == null)
+            ViewData["MenuTopLevelPages"] = resMenuTopLevelPages.Result;
+            if (resMenuTopLevelPages.Result!.Length == 0)
+            {
+                return Page();
+            }
+
+
+            var resCurrentPage = await _pagesService.GetByUrlAsync(Request.Path);
+            if (!string.IsNullOrEmpty(resCurrentPage.ExceptionString))
+            {
+                ViewData["FatalError"] = resCurrentPage.ExceptionString;
+                return Page();
+            }
+            if (resCurrentPage.Result == null)
             {
                 return NotFound();
             }
-            RazorNukePage = res.Result;
+            CurrentPage = resCurrentPage.Result;
+
             return Page();
         }
 
