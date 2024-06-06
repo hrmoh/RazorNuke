@@ -1,28 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using RSecurityBackend.Services;
+using RazorNuke.Models;
+using RazorNuke.Services;
 
 namespace RazorNuke.Pages
 {
     public class IndexModel : PageModel
     {
-        public int UserCount { get; set; }
-
-        protected readonly IAppUserService _usersService;
-
-        public IndexModel(IAppUserService usersService)
-        {
-            _usersService = usersService;
-        }
-
+        public RazorNukePage? RazorNukePage { get; set; }
+        public string FatalError { get; set; } = string.Empty;
         public async Task<IActionResult> OnGetAsync()
         {
-            var res = await _usersService.GetAllUsersInformation(new RSecurityBackend.Models.Generic.PagingParameterModel() { PageNumber = 1, PageSize = 20 }, string.Empty, string.Empty);
-            if(string.IsNullOrEmpty(res.ExceptionString))
+            var res = await _pagesService.GetByUrlAsync(Request.Path);
+            if (!string.IsNullOrEmpty(res.ExceptionString))
             {
-                UserCount = res.Result.Items.Length + 1;
+                FatalError = res.ExceptionString;
             }
+            if (res.Result == null)
+            {
+                return NotFound();
+            }
+            RazorNukePage = res.Result;
             return Page();
+        }
+
+
+
+        protected readonly IRazorNukePageService _pagesService;
+        public IndexModel(IRazorNukePageService pagesService)
+        {
+            _pagesService = pagesService;
         }
     }
 }

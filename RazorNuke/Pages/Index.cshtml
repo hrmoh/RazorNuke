@@ -1,10 +1,22 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
+
+@if (!string.IsNullOrEmpty(Model.FatalError))
+{
+    @Model.FatalError
+    return;
+}
+@if(Model.RazorNukePage == null)
+{
+    return;//just to get rid of compiler warning, because of this is null the user is gets a NotFound result and never should get here
 }
 
+@{
+    ViewData["Title"] = Model.RazorNukePage.FullTitle;//to be used in Pages/Shared/_Layout.cshtml and other external parts
+}
+
+
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>@Model.UserCount</p>
+    <h1 class="display-4">@Model.RazorNukePage.Title</h1>
+    @Html.Raw(Model.RazorNukePage.HtmlText)
 </div>
