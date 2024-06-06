@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] == null ? RazorNuke : @ViewData["Title"] - RazorNuke</title>
+    <title>@ViewData["Title"] - RazorNuke</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RazorNuke.styles.css" asp-append-version="true" />
@@ -13,14 +13,17 @@
     @if (ViewData["FatalError"] != null)
     {
         <p>@ViewData["FatalError"]</p>
+        @RenderBody()
     }
     @if (ViewData["MenuTopLevelPages"] == null)
     {
         <p>MenuTopLevelPages is null!</p>
+        @RenderBody()
     }
     else if ((ViewData["MenuTopLevelPages"]  as RazorNukePage[])!.Length == 0)
     {
         <p>Please create your top level pages first!</p>
+        @RenderBody()
     }
     else
     {
