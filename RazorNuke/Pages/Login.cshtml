@@ -1,0 +1,29 @@
+﻿@page
+@model RazorNuke.Pages.LoginModel
+@{
+}
+
+<form method="post">
+    <table>
+        <tr>
+            <td>
+                <span class="inputlabel">پست الکترونیکی: </span>
+            </td>
+            <td>
+                <input type="email" asp-for="LoginViewModel.Username" placeholder="پست الکترونیکی" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="inputlabel">گذرواژه: </span>
+            </td>
+            <td>
+                <input type="password" asp-for="LoginViewModel.Password" id="password" placeholder="گذرواژه" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" name="submit" id="submit" style="direction:rtl;text-align:center" class="pagebutton font-size-2em background-green width-100per padding-bottom-50px" value="ورود" /></td>
+        </tr>
+
+    </table>
+</form>
