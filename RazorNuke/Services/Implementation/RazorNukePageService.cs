@@ -9,6 +9,23 @@ namespace RazorNuke.Services.Implementation
     {
 
         /// <summary>
+        /// get page children
+        /// </summary>
+        /// <param name="parentId"></param>
+        /// <returns></returns>
+        public async Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId)
+        {
+            try
+            {
+                return new RServiceResult<RazorNukePage[]?>(await _context.Pages.AsNoTracking().Where(p => p.ParentId == parentId).OrderBy(p => p.PageOrder).ToArrayAsync());
+            }
+            catch (Exception exp)
+            {
+                return new RServiceResult<RazorNukePage[]?>(null, exp.ToString());
+            }
+        }
+
+        /// <summary>
         /// get page by url
         /// </summary>
         /// <param name="url"></param>
