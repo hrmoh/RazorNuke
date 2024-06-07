@@ -9,15 +9,17 @@ namespace RazorNuke.Services
         /// add new page
         /// </summary>
         /// <param name="page"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        Task<RServiceResult<RazorNukePage?>> AddAsync(RazorNukePage page);
+        Task<RServiceResult<RazorNukePage?>> AddAsync(Guid userId, RazorNukePage page);
 
         /// <summary>
         /// update page
         /// </summary>
         /// <param name="page"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        Task<RServiceResult<RazorNukePage?>> UpdateAsync(RazorNukePage page);
+        Task<RServiceResult<RazorNukePage?>> UpdateAsync(Guid userId, RazorNukePage page);
 
         /// <summary>
         /// delete page
@@ -32,11 +34,19 @@ namespace RazorNuke.Services
         /// <param name="parentId"></param>
         /// <returns></returns>
         Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId);
+
         /// <summary>
         /// get page by url
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
         Task<RServiceResult<RazorNukePage?>> GetByUrlAsync(string url);
+
+        /// <summary>
+        /// get page by id
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        Task<RServiceResult<RazorNukePage?>> GetAsync(int id);
     }
 }

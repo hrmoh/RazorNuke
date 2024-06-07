@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using RazorNuke.DbContext;
 using RazorNuke.Models;
 using RSecurityBackend.Models.Generic;
@@ -11,12 +12,16 @@ namespace RazorNuke.Services.Implementation
         /// <summary>
         /// add new page
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        public async Task<RServiceResult<RazorNukePage?>> AddAsync(RazorNukePage page)
+        public async Task<RServiceResult<RazorNukePage?>> AddAsync(Guid userId, RazorNukePage page)
         {
             try
             {
+                page.CreateDate = DateTime.Now;
+                page.LastModified = DateTime.Now;
+                page.CreateUserId = userId;
                 _context.Add(page);
                 await _context.SaveChangesAsync();
                 return new RServiceResult<RazorNukePage?>(page);
@@ -30,14 +35,16 @@ namespace RazorNuke.Services.Implementation
         /// <summary>
         /// update page
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        public async Task<RServiceResult<RazorNukePage?>> UpdateAsync(RazorNukePage page)
+        public async Task<RServiceResult<RazorNukePage?>> UpdateAsync(Guid userId, RazorNukePage page)
         {
             try
             {
                 var dbPage = await _context.Pages.Where(p => p.Id == page.Id).SingleAsync();
                 _context.Entry(dbPage).CurrentValues.SetValues(dbPage);
+                dbPage.LastModified = DateTime.Now;
                 _context.Update(dbPage);
                 await _context.SaveChangesAsync();
                 return new RServiceResult<RazorNukePage?>(dbPage);
@@ -114,10 +121,30 @@ namespace RazorNuke.Services.Implementation
             }
         }
 
+        /// <summary>
+        /// get page by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<RServiceResult<RazorNukePage?>> GetAsync(int id)
+        {
+            try
+            {
+                return new RServiceResult<RazorNukePage?>(await _context.Pages.AsNoTracking().Where(p => p.Id == id).SingleOrDefaultAsync());
+            }
+            catch (Exception exp)
+            {
+                return new RServiceResult<RazorNukePage?>(null, exp.ToString());
+            }
+        }
+
         protected readonly RDbContext _context;
-        public RazorNukePageService(RDbContext context)
+
+        protected IAuthorizationRequirement _authorization;
+        public RazorNukePageService(RDbContext context, IAuthorizationRequirement authorization)
         {
             _context = context;
+            _authorization = authorization;
         }
     }
 }
