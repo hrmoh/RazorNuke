@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorNuke.Models;
 using RazorNuke.Services;
@@ -40,7 +40,7 @@ namespace RazorNuke.Pages
                 {
                     Id = 0,
                     PageOrder = 0,
-                    Title = "",
+                    Title = "صفحهٔ جدید",
                     FullTitle = "",
                     TitleInMenu = "",
                     UrlSlug = "/",
