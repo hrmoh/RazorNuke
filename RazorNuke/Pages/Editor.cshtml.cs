@@ -118,9 +118,10 @@ namespace RazorNuke.Pages
         protected readonly IRazorNukePageService _service;
 
         protected IAppUserService _userService;
-        public EditorModel(IRazorNukePageService pagesService)
+        public EditorModel(IRazorNukePageService pagesService, IAppUserService userService)
         {
             _service = pagesService;
+            _userService = userService;
         }
     }
 }
