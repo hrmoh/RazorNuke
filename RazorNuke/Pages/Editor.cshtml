@@ -3,6 +3,11 @@
 @{
 }
 
+@if (Model.CurrentPage == null)
+{
+    return;
+}
+
 <div class="text-center">
     <h1 class="display-4">@Model.CurrentPage.Title</h1>
     <form method="post">
@@ -15,6 +20,20 @@
                 <td>عنوان:</td>
                 <td>
                     <input asp-for="CurrentPage.Title" />
+                </td>
+            </tr>
+            <tr>
+                <td>عنوان در منو:</td>
+                <td>
+                    <input asp-for="CurrentPage.TitleInMenu" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="inputlabel">متن: </span>
+                </td>
+                <td>
+                    <textarea asp-for="CurrentPage.HtmlText" tabindex="4" rows="20" cols="80"></textarea>
                 </td>
             </tr>
             <tr>

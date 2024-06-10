@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorNuke.Models;
 using RazorNuke.Services;
+using RSecurityBackend.Models.Auth.ViewModels;
+using RSecurityBackend.Models.Generic;
 using RSecurityBackend.Services;
+using System.Security.Claims;
 
 namespace RazorNuke.Pages
 {
@@ -19,7 +22,40 @@ namespace RazorNuke.Pages
                 ViewData["FatalError"] = "Please login!";
                 return Page();
             }
-            var principal = _userService.GetPrincipalFromToken(Request.Cookies["Token"], false);
+            ClaimsPrincipal? principal;
+
+            try
+            {
+                principal = _userService.GetPrincipalFromToken(Request.Cookies["Token"], false);
+            }
+            catch
+            {
+                principal = _userService.GetPrincipalFromToken(Request.Cookies["Token"], true);
+                string clientIPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                RServiceResult<LoggedOnUserModel> res = await _userService.ReLogin(new Guid(principal.Claims.FirstOrDefault(c => c.Type == "SessionId").Value), clientIPAddress);
+                if (res.Result == null)
+                {
+                    ViewData["FatalError"] = res.ExceptionString;
+                    return Page();
+                }
+
+                LoggedOnUserModel loggedOnUser = res.Result;
+
+                var cookieOption = new CookieOptions()
+                {
+                    Expires = DateTime.Now.AddDays(365),
+                };
+
+                Response.Cookies.Append("UserId", loggedOnUser.User.Id.ToString(), cookieOption);
+                Response.Cookies.Append("SessionId", loggedOnUser.SessionId.ToString(), cookieOption);
+                Response.Cookies.Append("Token", loggedOnUser.Token, cookieOption);
+                Response.Cookies.Append("Username", loggedOnUser.User.Username, cookieOption);
+                Response.Cookies.Append("Name", $"{loggedOnUser.User.FirstName} {loggedOnUser.User.SureName}", cookieOption);
+                Response.Cookies.Append("NickName", $"{loggedOnUser.User.NickName}", cookieOption);
+                principal = _userService.GetPrincipalFromToken(Request.Cookies["Token"], false);
+
+            }
+
             Guid userId = new Guid(principal.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             Guid sessionId = new Guid(principal.Claims.FirstOrDefault(c => c.Type == "SessionId").Value);
             var resSession = await _userService.SessionExists(userId, sessionId);
@@ -118,10 +154,13 @@ namespace RazorNuke.Pages
         protected readonly IRazorNukePageService _service;
 
         protected IAppUserService _userService;
-        public EditorModel(IRazorNukePageService pagesService, IAppUserService userService)
+
+        protected IHttpContextAccessor _httpContextAccessor;
+        public EditorModel(IRazorNukePageService pagesService, IAppUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _service = pagesService;
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
     }
 }
