@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RazorNuke.DbContext;
 using RazorNuke.Models;
 using RSecurityBackend.Models.Generic;
@@ -139,12 +138,9 @@ namespace RazorNuke.Services.Implementation
         }
 
         protected readonly RDbContext _context;
-
-        protected IAuthorizationRequirement _authorization;
-        public RazorNukePageService(RDbContext context, IAuthorizationRequirement authorization)
+        public RazorNukePageService(RDbContext context)
         {
             _context = context;
-            _authorization = authorization;
         }
     }
 }
