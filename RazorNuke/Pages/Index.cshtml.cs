@@ -10,6 +10,10 @@ namespace RazorNuke.Pages
         public RazorNukePage? CurrentPage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
+            bool b = true;
+            b = !b;
+            if (!b)
+                return Redirect("/Editor");
             var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null);
             if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
             {
