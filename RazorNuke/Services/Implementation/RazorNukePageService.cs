@@ -2,6 +2,8 @@
 using RazorNuke.DbContext;
 using RazorNuke.Models;
 using RSecurityBackend.Models.Generic;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace RazorNuke.Services.Implementation
 {
@@ -44,6 +46,7 @@ namespace RazorNuke.Services.Implementation
                 }
                 page.FullUrl = $"{urlPrefix}{page.UrlSlug}";
                 page.FullTitle = $"{titlePrefix}{page.Title}";
+                page.PlainText = _ExtractText(page.HtmlText);
                 _context.Add(page);
                 await _context.SaveChangesAsync();
                 return new RServiceResult<RazorNukePage?>(page);
@@ -83,6 +86,7 @@ namespace RazorNuke.Services.Implementation
 
                 }
                 page.LastModified = DateTime.Now;
+                page.PlainText = _ExtractText(page.HtmlText);
                 _context.Entry(dbPage).CurrentValues.SetValues(page);
                 _context.Update(dbPage);
                 await _context.SaveChangesAsync();
@@ -115,6 +119,14 @@ namespace RazorNuke.Services.Implementation
             {
                 await _UpdateChildren(page);
             }
+        }
+
+        private static string _ExtractText(string html)
+        {
+            Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
+            string s = reg.Replace(html, " ");
+            s = HttpUtility.HtmlDecode(s);
+            return s;
         }
 
         /// <summary>
