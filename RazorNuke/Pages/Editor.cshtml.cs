@@ -51,7 +51,7 @@ namespace RazorNuke.Pages
                 Response.Cookies.Append("Username", loggedOnUser.User.Username, cookieOption);
                 Response.Cookies.Append("Name", $"{loggedOnUser.User.FirstName} {loggedOnUser.User.SureName}", cookieOption);
                 Response.Cookies.Append("NickName", $"{loggedOnUser.User.NickName}", cookieOption);
-                principal = _userService.GetPrincipalFromToken(Request.Cookies["Token"], false);
+                principal = _userService.GetPrincipalFromToken(loggedOnUser.Token, false);
 
             }
 
