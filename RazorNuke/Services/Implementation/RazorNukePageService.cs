@@ -19,6 +19,8 @@ namespace RazorNuke.Services.Implementation
             try
             {
                 page.Title = page.Title.Trim();
+                if (string.IsNullOrEmpty(page.UrlSlug))
+                    page.UrlSlug = "";
                 page.UrlSlug = page.UrlSlug.Trim();
                 if (string.IsNullOrEmpty(page.Title))
                     return new RServiceResult<RazorNukePage?>(null, "Title could not be empty");

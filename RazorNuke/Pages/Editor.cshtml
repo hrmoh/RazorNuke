@@ -23,12 +23,6 @@
                 </td>
             </tr>
             <tr>
-                <td>عنوان در منو:</td>
-                <td>
-                    <input asp-for="CurrentPage.TitleInMenu" />
-                </td>
-            </tr>
-            <tr>
                 <td>نامک:</td>
                 <td>
                     <input asp-for="CurrentPage.UrlSlug" />
@@ -40,6 +34,19 @@
                     <input asp-for="CurrentPage.ParentId" />
                 </td>
             </tr>
+            <tr>
+                <td>ترتیب در منو:</td>
+                <td>
+                    <input asp-for="CurrentPage.PageOrder" />
+                </td>
+            </tr>
+            <tr>
+                <td>عنوان در منو:</td>
+                <td>
+                    <input asp-for="CurrentPage.TitleInMenu" />
+                </td>
+            </tr>
+
             <tr>
                 <td>
                     <span class="inputlabel">متن: </span>
