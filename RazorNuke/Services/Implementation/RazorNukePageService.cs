@@ -124,6 +124,8 @@ namespace RazorNuke.Services.Implementation
         {
             try
             {
+                if (await _context.Pages.Where(p => p.ParentId == id).AnyAsync())
+                    return new RServiceResult<bool>(false, "Page has children.");
                 var dbPage = await _context.Pages.Where(p => p.Id == id).SingleAsync();
                 _context.Remove(dbPage);
                 await _context.SaveChangesAsync();
