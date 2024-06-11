@@ -10,6 +10,7 @@ namespace RazorNuke.Pages
         public RazorNukePage? CurrentPage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
+            ViewData["LoggedIn"] = !string.IsNullOrEmpty(Request.Cookies["Token"]);
             var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null);
             if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
             {
@@ -35,10 +36,10 @@ namespace RazorNuke.Pages
             }
             CurrentPage = resCurrentPage.Result;
 
+            ViewData["Id"] = CurrentPage.Id;
+
             return Page();
         }
-
-
 
         protected readonly IRazorNukePageService _pagesService;
         public IndexModel(IRazorNukePageService pagesService)
