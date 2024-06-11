@@ -18,9 +18,30 @@ namespace RazorNuke.Services.Implementation
         {
             try
             {
+                page.Title = page.Title.Trim();
+                page.UrlSlug = page.UrlSlug.Trim();
+                if (string.IsNullOrEmpty(page.Title))
+                    return new RServiceResult<RazorNukePage?>(null, "Title could not be empty");
+                if (page.UrlSlug.Contains("/"))
+                    return new RServiceResult<RazorNukePage?>(null, "UrlSulg should not contain any /");
                 page.CreateDate = DateTime.Now;
                 page.LastModified = DateTime.Now;
                 page.CreateUserId = userId;
+                if(string.IsNullOrEmpty(page.TitleInMenu))
+                {
+                    page.TitleInMenu = page.Title;
+                }
+                page.TitleInMenu = page.TitleInMenu.Trim();
+                string urlPrefix = "/";
+                string titlePrefix = "";
+                if (page.ParentId != null)
+                {
+                    var parentPage = await _context.Pages.AsNoTracking().Where(p => p.Id == page.ParentId).SingleAsync();
+                    urlPrefix = $"{parentPage.FullUrl}/";
+                    titlePrefix = $"{parentPage.FullTitle} » ";
+                }
+                page.FullUrl = $"{urlPrefix}{page.UrlSlug}";
+                page.FullTitle = $"{titlePrefix}{page.Title}";
                 _context.Add(page);
                 await _context.SaveChangesAsync();
                 return new RServiceResult<RazorNukePage?>(page);
@@ -41,16 +62,56 @@ namespace RazorNuke.Services.Implementation
         {
             try
             {
+                page.Title = page.Title.Trim();
+                page.UrlSlug = page.UrlSlug.Trim();
+                page.TitleInMenu = page.TitleInMenu.Trim();
                 var dbPage = await _context.Pages.Where(p => p.Id == page.Id).SingleAsync();
-                _context.Entry(dbPage).CurrentValues.SetValues(dbPage);
-                dbPage.LastModified = DateTime.Now;
+                if(page.ParentId != dbPage.ParentId)
+                {
+                    string urlPrefix = "/";
+                    string titlePrefix = "";
+                    if (page.ParentId != null)
+                    {
+                        var parentPage = await _context.Pages.AsNoTracking().Where(p => p.Id == page.ParentId).SingleAsync();
+                        urlPrefix = $"{parentPage.FullUrl}/";
+                        titlePrefix = $"{parentPage.FullTitle} » ";
+                    }
+                    page.FullUrl = $"{urlPrefix}{page.UrlSlug}";
+                    page.FullTitle = $"{titlePrefix}{page.Title}";
+
+                }
+                page.LastModified = DateTime.Now;
+                _context.Entry(dbPage).CurrentValues.SetValues(page);
                 _context.Update(dbPage);
                 await _context.SaveChangesAsync();
+
+                await _UpdateChildren(dbPage);
+
                 return new RServiceResult<RazorNukePage?>(dbPage);
             }
             catch (Exception exp)
             {
                 return new RServiceResult<RazorNukePage?>(null, exp.ToString());
+            }
+        }
+
+        private async Task _UpdateChildren(RazorNukePage parentPage)
+        {
+            var children = await _context.Pages.Where(p => p.ParentId == parentPage.Id).ToListAsync();
+            if (!children.Any()) return;
+            var urlPrefix = $"{parentPage.FullUrl}/";
+            var titlePrefix = $"{parentPage.FullTitle} » ";
+
+            foreach (var page in children)
+            {
+                page.FullUrl = $"{urlPrefix}{page.UrlSlug}";
+                page.FullTitle = $"{titlePrefix}{page.Title}";
+            }
+            _context.UpdateRange(children);
+            await _context.SaveChangesAsync();
+            foreach (var page in children)
+            {
+                await _UpdateChildren(page);
             }
         }
 
