@@ -183,7 +183,7 @@ namespace RazorNuke.Services.Implementation
                 }
 
                 // /hafez/ => /hafez :
-                if (url.LastIndexOf('/') == url.Length - 1)
+                if (url != "/" && url.LastIndexOf('/') == url.Length - 1)
                 {
                     url = url.Substring(0, url.Length - 1);
                 }

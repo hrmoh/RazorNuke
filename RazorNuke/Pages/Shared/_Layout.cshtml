@@ -39,7 +39,7 @@
                             @foreach (var topLevelPage in ((ViewData["MenuTopLevelPages"] as RazorNukePage[])!))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" href="@topLevelPage.FullUrl">@topLevelPage.Title</a>
+                                    <a class="nav-link text-dark" href="@topLevelPage.FullUrl">@topLevelPage.TitleInMenu</a>
                                 </li>
                             }
                         </ul>
