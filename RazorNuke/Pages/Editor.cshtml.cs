@@ -32,11 +32,10 @@ namespace RazorNuke.Pages
             {
                 principal = _userService.GetPrincipalFromToken(Request.Cookies["Token"], true);
                 string clientIPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                RServiceResult<LoggedOnUserModel> res = await _userService.ReLogin(new Guid(principal.Claims.FirstOrDefault(c => c.Type == "SessionId").Value), clientIPAddress);
+                RServiceResult<LoggedOnUserModel> res = await _userService.ReLogin(Guid.Parse(Request.Cookies["SessionId"]), clientIPAddress);
                 if (res.Result == null)
                 {
-                    ViewData["FatalError"] = res.ExceptionString;
-                    return Page();
+                    return Redirect("/Login");
                 }
 
                 LoggedOnUserModel loggedOnUser = res.Result;
