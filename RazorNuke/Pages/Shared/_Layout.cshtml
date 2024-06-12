@@ -81,6 +81,7 @@
     <script src="/lib/tinymce/tinymce.min.js"></script>
     <script>
         const example_image_upload_handler = (blobInfo, progress) => new Promise((resolve, reject) => {
+            
             const xhr = new XMLHttpRequest();
             xhr.withCredentials = false;
             xhr.open('POST', '?Handler=UploadImage');
@@ -90,6 +91,7 @@
             };
 
             xhr.onload = () => {
+
                 if (xhr.status === 403) {
                     reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
                     return;
@@ -124,12 +126,11 @@
         tinymce.init({
             selector: 'textarea.editor',
             language: 'fa_IR',
-            menubar: false,
+            menubar: true,
             contextmenu: false,
             height: 500,
             toolbar: 'undo redo | styles | bold italic underline | table | link image paste | emoticons',
-            plugins: 'autolink media link image emoticons table paste', a11y_advanced_options: true,
-            paste_data_images: true,
+            plugins: 'autolink media link image emoticons table paste',
             automatic_uploads: true,
             images_upload_handler: example_image_upload_handler,
             skin: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "oxide-dark" : localStorage.getItem("scheme") == "dark" ? "oxide-dark" : ""),

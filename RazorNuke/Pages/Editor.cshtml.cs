@@ -196,7 +196,12 @@ namespace RazorNuke.Pages
                 {
                     return new BadRequestObjectResult(image.ExceptionString);
                 }
-                return new OkObjectResult($"/images/{image.Result.Id}{Path.GetExtension(file.FileName)}");
+                return new OkObjectResult(
+                    new
+                    {
+                        Location = $"/images/{image.Result.Id}{Path.GetExtension(file.FileName)}"
+                    }
+                    );
             }
             catch (Exception exp)
             {
