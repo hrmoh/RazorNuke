@@ -4,11 +4,13 @@ using RazorNuke.Models;
 using RazorNuke.Services;
 using RSecurityBackend.Models.Auth.ViewModels;
 using RSecurityBackend.Models.Generic;
+using RSecurityBackend.Models.Image;
 using RSecurityBackend.Services;
 using System.Security.Claims;
 
 namespace RazorNuke.Pages
 {
+    [IgnoreAntiforgeryToken(Order = 1001)]
     public class EditorModel : PageModel
     {
         [BindProperty]
@@ -122,6 +124,22 @@ namespace RazorNuke.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ViewData["Language"] = Configuration.GetSection("RazorNuke")["Language"];
+            var direction = Configuration.GetSection("RazorNuke")["Direction"];
+            ViewData["Direction"] = direction;
+            var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
+            var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
+            if (direction == "rtl")
+            {
+                ViewData["SiteTitlePart"] = $"{siteName} {sep} ";
+            }
+            else
+            {
+                ViewData["SiteTitlePart"] = $" {sep} {siteName}";
+            }
+
+            ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
+
             if (string.IsNullOrEmpty(Request.Cookies["Token"]))
             {
                 ViewData["FatalError"] = "Please login";
@@ -164,19 +182,41 @@ namespace RazorNuke.Pages
             return Page();
         }
 
+        public async Task<IActionResult> OnPostUploadImageAsync(IFormFile file)
+        {
+            try
+            {
+                RServiceResult<RImage> image = await _pictureFileService.Add(file, null, file.FileName, "Images", true);
+                if (!string.IsNullOrEmpty(image.ExceptionString))
+                {
+                    return new BadRequestObjectResult(image.ExceptionString);
+                }
+                image = await _pictureFileService.Store(image.Result);
+                if (!string.IsNullOrEmpty(image.ExceptionString))
+                {
+                    return new BadRequestObjectResult(image.ExceptionString);
+                }
+                return new OkObjectResult($"/images/{image.Result.Id}{Path.GetExtension(file.FileName)}");
+            }
+            catch (Exception exp)
+            {
+                return new BadRequestObjectResult(exp.ToString());
+            }
+
+        }
+
         protected readonly IRazorNukePageService _service;
-
         protected readonly IConfiguration Configuration;
-
         protected IAppUserService _userService;
-
+        protected readonly IImageFileService _pictureFileService;
         protected IHttpContextAccessor _httpContextAccessor;
-        public EditorModel(IConfiguration configuration, IRazorNukePageService pagesService, IAppUserService userService, IHttpContextAccessor httpContextAccessor)
+        public EditorModel(IConfiguration configuration, IRazorNukePageService pagesService, IAppUserService userService, IHttpContextAccessor httpContextAccessor, IImageFileService pictureFileService)
                
         {
             _service = pagesService;
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
+            _pictureFileService = pictureFileService;
             Configuration = configuration;
         }
     }

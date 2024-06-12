@@ -20,6 +20,8 @@ namespace RazorNuke.Services.Implementation
         {
             try
             {
+                if (await _context.Pages.AsNoTracking().AnyAsync(a => a.UrlSlug == page.UrlSlug && a.ParentId == page.ParentId))
+                    return new RServiceResult<RazorNukePage?>(null, "Duplicated url");
                 page.Title = page.Title.Trim();
                 if (string.IsNullOrEmpty(page.UrlSlug))
                     page.UrlSlug = "";
@@ -189,7 +191,7 @@ namespace RazorNuke.Services.Implementation
                 }
 
                 url = url.Replace("//", "/"); //duplicated slashes would be merged
-                return new RServiceResult<RazorNukePage?>(await _context.Pages.AsNoTracking().Where(p => p.FullUrl == url).SingleOrDefaultAsync());
+                return new RServiceResult<RazorNukePage?>(await _context.Pages.AsNoTracking().Where(p => p.FullUrl == url).FirstOrDefaultAsync());
             }
             catch (Exception exp)
             {

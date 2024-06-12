@@ -87,17 +87,6 @@ new IdentityBuilder(typeof(RAppUser), typeof(RAppRole), builder.Services)
                 .AddSignInManager<SignInManager<RAppUser>>()
                 .AddEntityFrameworkStores<RDbContext>()
                 .AddErrorDescriber<PersianIdentityErrorDescriber>();
-if (bool.Parse(builder.Configuration["AuditNetEnabled"] ?? false.ToString()))
-{
-    builder.Services.AddMvc(mvc =>
-                   mvc.AddAuditFilter(config => config
-                   .LogRequestIf(r => r.Method != "GET")
-                   .WithEventType("{controller}/{action} ({verb})")
-                   .IncludeHeaders(ctx => !ctx.ModelState.IsValid)
-                   .IncludeRequestBody()
-                   .IncludeModelState()
-               ));
-}
 
 builder.Services.AddMemoryCache();
 
@@ -244,5 +233,11 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.UseEndpoints(endpoints =>
+{
+    _ = endpoints.MapControllers();
+});
+
 
 app.Run();
