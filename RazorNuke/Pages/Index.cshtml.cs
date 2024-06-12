@@ -10,6 +10,20 @@ namespace RazorNuke.Pages
         public RazorNukePage? CurrentPage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
+            ViewData["Language"] = Configuration.GetSection("RazorNuke")["Language"];
+            var direction = Configuration.GetSection("RazorNuke")["Direction"];
+            ViewData["Direction"] = direction;
+            var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
+            var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
+            if (direction == "rtl")
+            {
+                ViewData["SiteTitlePart"] = $"{siteName} {sep} ";
+            }
+            else
+            {
+                ViewData["SiteTitlePart"] = $" {sep} {siteName}";
+            }
+
             ViewData["LoggedIn"] = !string.IsNullOrEmpty(Request.Cookies["Token"]);
             var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null);
             if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
@@ -42,9 +56,12 @@ namespace RazorNuke.Pages
         }
 
         protected readonly IRazorNukePageService _pagesService;
-        public IndexModel(IRazorNukePageService pagesService)
+        protected readonly IConfiguration Configuration;
+        public IndexModel(IRazorNukePageService pagesService, IConfiguration configuration)
         {
             _pagesService = pagesService;
+            Configuration = configuration;
+            
         }
     }
 }

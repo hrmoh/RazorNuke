@@ -15,6 +15,20 @@ namespace RazorNuke.Pages
         public RazorNukePage CurrentPage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
+            ViewData["Language"] = Configuration.GetSection("RazorNuke")["Language"];
+            var direction = Configuration.GetSection("RazorNuke")["Direction"];
+            ViewData["Direction"] = direction;
+            var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
+            var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
+            if (direction == "rtl")
+            {
+                ViewData["SiteTitlePart"] = $"{siteName} {sep} ";
+            }
+            else
+            {
+                ViewData["SiteTitlePart"] = $" {sep} {siteName}";
+            }
+
             ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
 
             if(string.IsNullOrEmpty(Request.Cookies["Token"]))
@@ -152,14 +166,18 @@ namespace RazorNuke.Pages
 
         protected readonly IRazorNukePageService _service;
 
+        protected readonly IConfiguration Configuration;
+
         protected IAppUserService _userService;
 
         protected IHttpContextAccessor _httpContextAccessor;
-        public EditorModel(IRazorNukePageService pagesService, IAppUserService userService, IHttpContextAccessor httpContextAccessor)
+        public EditorModel(IConfiguration configuration, IRazorNukePageService pagesService, IAppUserService userService, IHttpContextAccessor httpContextAccessor)
+               
         {
             _service = pagesService;
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
+            Configuration = configuration;
         }
     }
 }

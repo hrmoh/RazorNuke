@@ -1,10 +1,17 @@
 ﻿@using RazorNuke.Models
 <!DOCTYPE html>
-<html lang="fa-IR" dir="rtl">
+<html lang="@ViewData["Language"]" dir="@ViewData["Direction"]">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - RazorNuke</title>
+    @if (ViewData["Direction"].ToString() == "rtl")
+    {
+        <title>@ViewData["SiteTitlePart"]@ViewData["Title"]</title>
+    }
+    else
+    {
+        <title>@ViewData["Title"]@ViewData["SiteTitlePart"]</title>
+    }
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RazorNuke.styles.css" asp-append-version="true" />
@@ -77,13 +84,16 @@
             selector: 'textarea.editor',
             language: 'fa_IR',
             menubar: false,
-            plugins: 'link paste image',
             contextmenu: false,
-            toolbar: 'undo redo | alignleft aligncenter alignright alignjustify | link',
-            paste_auto_cleanup_on_paste: true,
-            paste_remove_styles: true,
-            paste_remove_styles_if_webkit: true,
-            paste_strip_class_attributes: true,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
             a11y_advanced_options: true,
             skin: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "oxide-dark" : localStorage.getItem("scheme") == "dark" ? "oxide-dark" : ""),
             content_css: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "dark" : localStorage.getItem("scheme") == "dark" ? "dark" : ""),
