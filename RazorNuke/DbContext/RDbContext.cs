@@ -32,6 +32,10 @@ namespace RazorNuke.DbContext
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<RazorNukePage>()
+                .HasIndex(m => m.FullUrl)
+                .IsUnique(true);
         }
 
         /// <summary>
