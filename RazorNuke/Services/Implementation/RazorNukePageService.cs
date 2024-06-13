@@ -20,8 +20,6 @@ namespace RazorNuke.Services.Implementation
         {
             try
             {
-                if (await _context.Pages.AsNoTracking().AnyAsync(a => a.UrlSlug == page.UrlSlug && a.ParentId == page.ParentId))
-                    return new RServiceResult<RazorNukePage?>(null, "Duplicated url");
                 page.Title = page.Title.Trim();
                 if (string.IsNullOrEmpty(page.UrlSlug))
                     page.UrlSlug = "";
@@ -47,6 +45,8 @@ namespace RazorNuke.Services.Implementation
                     titlePrefix = $"{parentPage.FullTitle} » ";
                 }
                 page.FullUrl = $"{urlPrefix}{page.UrlSlug}";
+                if (await _context.Pages.AsNoTracking().AnyAsync(a => a.FullUrl == page.FullUrl))
+                    return new RServiceResult<RazorNukePage?>(null, "Duplicated full url.");
                 page.FullTitle = $"{titlePrefix}{page.Title}";
                 page.PlainText = _ExtractText(page.HtmlText);
                 _context.Add(page);
@@ -85,6 +85,9 @@ namespace RazorNuke.Services.Implementation
                     }
                     page.FullUrl = $"{urlPrefix}{page.UrlSlug}";
                     page.FullTitle = $"{titlePrefix}{page.Title}";
+
+                    if (await _context.Pages.AsNoTracking().AnyAsync(a => a.FullUrl == page.FullUrl && a.Id != page.Id))
+                        return new RServiceResult<RazorNukePage?>(null, "Duplicated full url.");
 
                 }
                 page.LastModified = DateTime.Now;
