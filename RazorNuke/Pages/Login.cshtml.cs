@@ -15,6 +15,19 @@ namespace RazorNuke.Pages
 
         public IActionResult OnGet()
         {
+            ViewData["Language"] = Configuration.GetSection("RazorNuke")["Language"];
+            var direction = Configuration.GetSection("RazorNuke")["Direction"];
+            ViewData["Direction"] = direction;
+            var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
+            var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
+            if (direction == "rtl")
+            {
+                ViewData["SiteTitlePart"] = $"{siteName} {sep} ";
+            }
+            else
+            {
+                ViewData["SiteTitlePart"] = $" {sep} {siteName}";
+            }
             ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
             return Page();
         }
@@ -62,11 +75,14 @@ namespace RazorNuke.Pages
         /// </summary>
         protected IHttpContextAccessor _httpContextAccessor;
 
-        public LoginModel(IAppUserService service, IHttpContextAccessor httpContextAccessor)
+        protected readonly IConfiguration Configuration;
+
+        public LoginModel(IAppUserService service, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _service = service;
             LoginViewModel = new LoginViewModel();
             _httpContextAccessor = httpContextAccessor;
+            Configuration = configuration;
         }
 
     }

@@ -70,6 +70,8 @@ namespace RazorNuke.Services.Implementation
             try
             {
                 page.Title = page.Title.Trim();
+                if (string.IsNullOrEmpty(page.UrlSlug))
+                    page.UrlSlug = "";
                 page.UrlSlug = page.UrlSlug.Trim();
                 page.TitleInMenu = page.TitleInMenu.Trim();
                 var dbPage = await _context.Pages.Where(p => p.Id == page.Id).SingleAsync();
@@ -89,6 +91,11 @@ namespace RazorNuke.Services.Implementation
                     if (await _context.Pages.AsNoTracking().AnyAsync(a => a.FullUrl == page.FullUrl && a.Id != page.Id))
                         return new RServiceResult<RazorNukePage?>(null, "Duplicated full url.");
 
+                }
+                else
+                {
+                    page.FullUrl = dbPage.FullUrl;
+                    page.FullTitle = dbPage.FullTitle;
                 }
                 page.LastModified = DateTime.Now;
                 page.PlainText = _ExtractText(page.HtmlText);
