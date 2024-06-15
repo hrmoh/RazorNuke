@@ -38,7 +38,7 @@ namespace RazorNuke.Models
         public DateTime RecordDate { get; set; }
 
         /// <summary>
-        /// a description of the modfication
+        /// a description of the modification
         /// </summary>
         public required string Note { get; set; }
 

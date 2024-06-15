@@ -69,12 +69,31 @@ namespace RazorNuke.Services.Implementation
         {
             try
             {
+                var dbPage = await _context.Pages.Where(p => p.Id == page.Id).SingleAsync();
+                RazorNukePageSnapshot snapshot = new RazorNukePageSnapshot()
+                {
+                    Page = dbPage,
+                    MadeObsoleteByUserId = userId,
+                    RecordDate = DateTime.Now,
+                    Note = "",
+                    PageOrder = dbPage.PageOrder,
+                    Published = dbPage.Published,
+                    TitleInMenu = dbPage.TitleInMenu,
+                    Title = dbPage.Title,
+                    FullTitle = dbPage.FullTitle,
+                    UrlSlug = dbPage.UrlSlug,
+                    FullUrl = dbPage.FullUrl,
+                    HtmlText = dbPage.HtmlText,
+                    PlainText = dbPage.PlainText,
+                };
+                _context.Add(snapshot);
+
                 page.Title = page.Title.Trim();
                 if (string.IsNullOrEmpty(page.UrlSlug))
                     page.UrlSlug = "";
                 page.UrlSlug = page.UrlSlug.Trim();
                 page.TitleInMenu = page.TitleInMenu.Trim();
-                var dbPage = await _context.Pages.Where(p => p.Id == page.Id).SingleAsync();
+                
                 page.CreateDate = dbPage.CreateDate;
                 page.CreateUserId = dbPage.CreateUserId;
                 if(page.ParentId != dbPage.ParentId)
@@ -154,6 +173,8 @@ namespace RazorNuke.Services.Implementation
             {
                 if (await _context.Pages.Where(p => p.ParentId == id).AnyAsync())
                     return new RServiceResult<bool>(false, "Page has children.");
+                var snapshots = await _context.PageSnapshots.Where(p => p.PageId == id).ToArrayAsync();
+                _context.RemoveRange(snapshots);
                 var dbPage = await _context.Pages.Where(p => p.Id == id).SingleAsync();
                 _context.Remove(dbPage);
                 await _context.SaveChangesAsync();
