@@ -1,4 +1,5 @@
 ﻿using RSecurityBackend.Models.Auth.Db;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RazorNuke.Models
 {
@@ -83,6 +84,12 @@ namespace RazorNuke.Models
         /// last modified
         /// </summary>
         public DateTime LastModified { get; set; }
+
+        /// <summary>
+        /// selected
+        /// </summary>
+        [NotMapped]
+        public bool Selected { get; set; }
 
     }
 }

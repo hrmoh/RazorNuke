@@ -31,7 +31,7 @@ namespace RazorNuke.Pages
                 ViewData["FatalError"] = resMenuTopLevelPages.ExceptionString;
                 return Page();
             }
-            ViewData["MenuTopLevelPages"] = resMenuTopLevelPages.Result;
+            
             if (resMenuTopLevelPages.Result!.Length == 0)
             {
                 return Page();
@@ -49,6 +49,16 @@ namespace RazorNuke.Pages
                 return NotFound();
             }
             CurrentPage = resCurrentPage.Result;
+
+            var menuTopLevelPages = resMenuTopLevelPages.Result;
+
+            foreach (var menuTopLevelPage in menuTopLevelPages)
+            {
+                if (menuTopLevelPage.FullUrl == CurrentPage.FullUrl)
+                    menuTopLevelPage.Selected = true;
+            }
+
+            ViewData["MenuTopLevelPages"] = menuTopLevelPages;
 
             ViewData["Id"] = CurrentPage.Id;
 
