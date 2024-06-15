@@ -23,9 +23,9 @@ namespace RazorNuke.Pages
             {
                 ViewData["SiteTitlePart"] = $" {sep} {siteName}";
             }
-
-            ViewData["LoggedIn"] = !string.IsNullOrEmpty(Request.Cookies["Token"]);
-            var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null, string.IsNullOrEmpty(Request.Cookies["Token"]));
+            bool loggedIn = !string.IsNullOrEmpty(Request.Cookies["Token"]);
+            ViewData["LoggedIn"] = loggedIn;
+            var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null, !loggedIn);
             if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
             {
                 ViewData["FatalError"] = resMenuTopLevelPages.ExceptionString;
@@ -38,7 +38,7 @@ namespace RazorNuke.Pages
             }
 
 
-            var resCurrentPage = await _pagesService.GetByFullUrlAsync(Request.Path);
+            var resCurrentPage = await _pagesService.GetByFullUrlAsync(Request.Path, !loggedIn);
             if (!string.IsNullOrEmpty(resCurrentPage.ExceptionString))
             {
                 ViewData["FatalError"] = resCurrentPage.ExceptionString;

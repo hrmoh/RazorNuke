@@ -190,25 +190,26 @@ namespace RazorNuke.Services.Implementation
         /// <summary>
         /// get page by url
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="fullUrl"></param>
+        /// <param name="onlyPublished"></param>
         /// <returns></returns>
-        public async Task<RServiceResult<RazorNukePage?>> GetByFullUrlAsync(string url)
+        public async Task<RServiceResult<RazorNukePage?>> GetByFullUrlAsync(string fullUrl, bool onlyPublished)
         {
             try
             {
-                if (url.IndexOf('?') != -1)
+                if (fullUrl.IndexOf('?') != -1)
                 {
-                    url = url.Substring(0, url.IndexOf('?'));
+                    fullUrl = fullUrl.Substring(0, fullUrl.IndexOf('?'));
                 }
 
                 // /hafez/ => /hafez :
-                if (url != "/" && url.LastIndexOf('/') == url.Length - 1)
+                if (fullUrl != "/" && fullUrl.LastIndexOf('/') == fullUrl.Length - 1)
                 {
-                    url = url.Substring(0, url.Length - 1);
+                    fullUrl = fullUrl.Substring(0, fullUrl.Length - 1);
                 }
 
-                url = url.Replace("//", "/"); //duplicated slashes would be merged
-                return new RServiceResult<RazorNukePage?>(await _context.Pages.AsNoTracking().Where(p => p.FullUrl == url).FirstOrDefaultAsync());
+                fullUrl = fullUrl.Replace("//", "/"); //duplicated slashes would be merged
+                return new RServiceResult<RazorNukePage?>(await _context.Pages.AsNoTracking().Where(p => p.FullUrl == fullUrl && (onlyPublished == false || p.Published == true)).FirstOrDefaultAsync());
             }
             catch (Exception exp)
             {

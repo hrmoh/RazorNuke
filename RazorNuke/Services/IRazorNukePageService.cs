@@ -39,9 +39,10 @@ namespace RazorNuke.Services
         /// <summary>
         /// get page by url
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="fullUrl"></param>
+        /// <param name="onlyPublished"></param>
         /// <returns></returns>
-        Task<RServiceResult<RazorNukePage?>> GetByFullUrlAsync(string url);
+        Task<RServiceResult<RazorNukePage?>> GetByFullUrlAsync(string fullUrl, bool onlyPublished);
 
         /// <summary>
         /// get page by id
