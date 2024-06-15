@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @if (ViewData["Direction"].ToString() == "rtl")
     {
-        <title>@ViewData["SiteTitlePart"]@ViewData["Title"]</title>
+        <title>@Html.Raw($"{ViewData["SiteTitlePart"]}{ViewData["Title"]}")</title>
     }
     else
     {
-        <title>@ViewData["Title"]@ViewData["SiteTitlePart"]</title>
+        <title>@Html.Raw($"{ViewData["Title"]}{ViewData["SiteTitlePart"]}")</title>
     }
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
