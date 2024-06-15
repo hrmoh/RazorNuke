@@ -40,7 +40,7 @@ namespace RazorNuke.Services
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        Task<RServiceResult<RazorNukePage?>> GetByUrlAsync(string url);
+        Task<RServiceResult<RazorNukePage?>> GetByFullUrlAsync(string url);
 
         /// <summary>
         /// get page by id

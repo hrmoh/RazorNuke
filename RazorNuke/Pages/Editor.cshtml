@@ -50,7 +50,6 @@
                     <input asp-for="CurrentPage.TitleInMenu" />
                 </td>
             </tr>
-
             <tr>
                 <td>
                     <span class="inputlabel">متن: </span>
@@ -59,6 +58,13 @@
                     <textarea asp-for="CurrentPage.HtmlText" class="editor"></textarea>
                 </td>
             </tr>
+            <tr>
+                <td>منتشر شده:</td>
+                <td>
+                    <input asp-for="CurrentPage.Published" />
+                </td>
+            </tr>
+
             <tr>
                 <td colspan="2">
                     <input asp-for="CurrentPage.UrlSlug" hidden />

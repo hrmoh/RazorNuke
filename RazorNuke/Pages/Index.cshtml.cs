@@ -38,7 +38,7 @@ namespace RazorNuke.Pages
             }
 
 
-            var resCurrentPage = await _pagesService.GetByUrlAsync(Request.Path);
+            var resCurrentPage = await _pagesService.GetByFullUrlAsync(Request.Path);
             if (!string.IsNullOrEmpty(resCurrentPage.ExceptionString))
             {
                 ViewData["FatalError"] = resCurrentPage.ExceptionString;

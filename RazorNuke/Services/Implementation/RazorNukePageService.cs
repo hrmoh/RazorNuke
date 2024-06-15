@@ -185,7 +185,7 @@ namespace RazorNuke.Services.Implementation
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public async Task<RServiceResult<RazorNukePage?>> GetByUrlAsync(string url)
+        public async Task<RServiceResult<RazorNukePage?>> GetByFullUrlAsync(string url)
         {
             try
             {
