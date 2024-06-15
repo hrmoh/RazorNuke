@@ -4,6 +4,7 @@ using RazorNuke.Models;
 using RSecurityBackend.Models.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml.Linq;
 
 namespace RazorNuke.Services.Implementation
 {
@@ -51,6 +52,9 @@ namespace RazorNuke.Services.Implementation
                 page.PlainText = _ExtractText(page.HtmlText);
                 _context.Add(page);
                 await _context.SaveChangesAsync();
+
+                await _RebuildSitemapAsync();
+
                 return new RServiceResult<RazorNukePage?>(page);
             }
             catch (Exception exp)
@@ -126,6 +130,8 @@ namespace RazorNuke.Services.Implementation
 
                 await _UpdateChildren(dbPage);
 
+                await _RebuildSitemapAsync();
+
                 return new RServiceResult<RazorNukePage?>(dbPage);
             }
             catch (Exception exp)
@@ -178,6 +184,7 @@ namespace RazorNuke.Services.Implementation
                 var dbPage = await _context.Pages.Where(p => p.Id == id).SingleAsync();
                 _context.Remove(dbPage);
                 await _context.SaveChangesAsync();
+                await _RebuildSitemapAsync();
                 return new RServiceResult<bool>(true);
             }
             catch (Exception exp)
@@ -257,10 +264,50 @@ namespace RazorNuke.Services.Implementation
             }
         }
 
+        private async Task _RebuildSitemapAsync()
+        {
+            try
+            {
+                string xmlSitemap = Configuration.GetSection("RazorNuke")["SitemapAbosultePathOnDisk"] ?? "";
+                if (string.IsNullOrEmpty(xmlSitemap))
+                    return;
+                WriteSitemap(xmlSitemap, await _context.Pages.AsNoTracking().Where(p => p.Published).OrderBy(p => p.ParentId).ThenBy(p => p.PageOrder).Select(p => p.FullUrl).ToListAsync());
+            }
+            catch
+            {
+                //ignore
+            }
+        }
+
+        private void WriteSitemap(string filePath, List<string> urls)
+        {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            XNamespace ns = "http://www.sitemaps.org/schemas/sitemap/0.9";
+            XNamespace xsiNs = "http://www.w3.org/2001/XMLSchema-instance";
+
+            XDocument xDoc = new XDocument(
+                new XDeclaration("1.0", "UTF-8", "no"),
+                new XElement(ns + "urlset",
+                new XAttribute(XNamespace.Xmlns + "xsi", xsiNs),
+                new XAttribute(xsiNs + "schemaLocation",
+                    "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
+                from url in urls
+                select new XElement(ns + "url",
+                    new XElement(ns + "loc", $"https://ganjoor.net{url}"))
+                )
+            );
+
+            xDoc.Save(filePath);
+        }
+
+
         protected readonly RDbContext _context;
-        public RazorNukePageService(RDbContext context)
+        protected readonly IConfiguration Configuration;
+        public RazorNukePageService(RDbContext context, IConfiguration configuration)
         {
             _context = context;
+            Configuration = configuration;
         }
     }
 }
