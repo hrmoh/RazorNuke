@@ -25,7 +25,7 @@ namespace RazorNuke.Pages
             }
 
             ViewData["LoggedIn"] = !string.IsNullOrEmpty(Request.Cookies["Token"]);
-            var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null);
+            var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null, string.IsNullOrEmpty(Request.Cookies["Token"]));
             if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
             {
                 ViewData["FatalError"] = resMenuTopLevelPages.ExceptionString;

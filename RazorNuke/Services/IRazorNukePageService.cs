@@ -32,8 +32,9 @@ namespace RazorNuke.Services
         /// get page children
         /// </summary>
         /// <param name="parentId"></param>
+        /// <param name="onlyPublished"></param>
         /// <returns></returns>
-        Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId);
+        Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId, bool onlyPublished);
 
         /// <summary>
         /// get page by url

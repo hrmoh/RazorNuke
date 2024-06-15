@@ -167,12 +167,19 @@ namespace RazorNuke.Services.Implementation
         /// get page children
         /// </summary>
         /// <param name="parentId"></param>
+        /// <param name="onlyPublished"></param>
         /// <returns></returns>
-        public async Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId)
+        public async Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId, bool onlyPublished)
         {
             try
             {
-                return new RServiceResult<RazorNukePage[]?>(await _context.Pages.AsNoTracking().Where(p => p.ParentId == parentId).OrderBy(p => p.PageOrder).ToArrayAsync());
+                return new RServiceResult<RazorNukePage[]?>
+                    (
+                    await _context.Pages.AsNoTracking()
+                        .Where(p => p.ParentId == parentId && (onlyPublished == false || p.Published == true))
+                        .OrderBy(p => p.PageOrder)
+                        .ToArrayAsync()
+                    );
             }
             catch (Exception exp)
             {
