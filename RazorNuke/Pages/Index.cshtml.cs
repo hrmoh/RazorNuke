@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorNuke.Models;
 using RazorNuke.Services;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace RazorNuke.Pages
 {
@@ -31,7 +32,10 @@ namespace RazorNuke.Pages
                 ViewData["FatalError"] = resMenuTopLevelPages.ExceptionString;
                 return Page();
             }
-            
+
+            ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
+
+
             if (resMenuTopLevelPages.Result!.Length == 0)
             {
                 return Page();

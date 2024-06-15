@@ -20,6 +20,7 @@ namespace RazorNuke.Pages
             ViewData["Direction"] = direction;
             var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
             var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
+            ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
             if (direction == "rtl")
             {
                 ViewData["SiteTitlePart"] = $"{siteName} {sep} ";

@@ -32,8 +32,9 @@ namespace RazorNuke.Pages
             }
 
             ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
+            ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
 
-            if(string.IsNullOrEmpty(Request.Cookies["Token"]))
+            if (string.IsNullOrEmpty(Request.Cookies["Token"]))
             {
                 ViewData["FatalError"] = "Please login!";
                 return Page();
