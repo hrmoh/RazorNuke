@@ -16,7 +16,7 @@
             <tr>
                 <td>Id:</td>
                 <td>
-                    @Model.CurrentPage.Id
+                    <a href="@Model.CurrentPage.FullUrl">@Model.CurrentPage.Id</a>
                     <input asp-for="CurrentPage.Id" hidden />
                 </td>
             </tr>
