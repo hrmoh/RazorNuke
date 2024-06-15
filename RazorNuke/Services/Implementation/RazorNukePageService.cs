@@ -75,6 +75,8 @@ namespace RazorNuke.Services.Implementation
                 page.UrlSlug = page.UrlSlug.Trim();
                 page.TitleInMenu = page.TitleInMenu.Trim();
                 var dbPage = await _context.Pages.Where(p => p.Id == page.Id).SingleAsync();
+                page.CreateDate = dbPage.CreateDate;
+                page.CreateUserId = dbPage.CreateUserId;
                 if(page.ParentId != dbPage.ParentId)
                 {
                     string urlPrefix = "/";
