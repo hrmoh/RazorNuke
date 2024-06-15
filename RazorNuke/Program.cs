@@ -18,10 +18,16 @@ using RSecurityBackend.Services;
 using RSecurityBackend.Services.Implementation;
 using RSecurityBackend.Utilities;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton(
+                 HtmlEncoder.Create(allowedRanges: [ UnicodeRanges.BasicLatin,
+                    UnicodeRanges.Arabic ]));
+
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AddPageRoute("/index", "{*url}");
