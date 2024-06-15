@@ -15,6 +15,7 @@ namespace RazorNuke.Pages
             var direction = Configuration.GetSection("RazorNuke")["Direction"];
             ViewData["Direction"] = direction;
             var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
+            ViewData["SiteName"] = siteName;
             var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
             if (direction == "rtl")
             {
