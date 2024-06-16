@@ -22,12 +22,13 @@ namespace RazorNuke.Pages
             ViewData["Direction"] = direction;
             ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
             ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
-
+            bool loggedIn = !string.IsNullOrEmpty(Request.Cookies["Token"]);
             if (string.IsNullOrEmpty(Request.Cookies["Token"]))
             {
                 ViewData["FatalError"] = "Please login!";
                 return Page();
             }
+            ViewData["LoggedIn"] = loggedIn;
             ClaimsPrincipal? principal;
 
             try
