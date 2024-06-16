@@ -98,24 +98,25 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
-    <script src="/lib/tinymce/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea.editor',
-            language: 'fa_IR',
-            menubar: true,
-            contextmenu: false,
-            height: 500,
-            toolbar: 'undo redo | styles | bold italic underline | table | link image paste | emoticons',
-            plugins: 'autolink media link image emoticons table paste',
-            automatic_uploads: true,
-            images_upload_url: '?Handler=UploadImage',
-            skin: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "oxide-dark" : localStorage.getItem("scheme") == "dark" ? "oxide-dark" : ""),
-            content_css: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "dark" : localStorage.getItem("scheme") == "dark" ? "dark" : ""),
-        });
-    </script>
-
+    @if (ViewData["LoggedIn"] != null && (ViewData["LoggedIn"] is bool) && (bool)ViewData["LoggedIn"]!)
+    {
+        <script src="/lib/tinymce/tinymce.min.js"></script>
+        <script>
+            tinymce.init({
+                selector: 'textarea.editor',
+                language: 'fa_IR',
+                menubar: true,
+                contextmenu: false,
+                height: 500,
+                toolbar: 'undo redo | styles | bold italic underline | table | link image paste | emoticons',
+                plugins: 'autolink media link image emoticons table paste',
+                automatic_uploads: true,
+                images_upload_url: '?Handler=UploadImage',
+                skin: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "oxide-dark" : localStorage.getItem("scheme") == "dark" ? "oxide-dark" : ""),
+                content_css: (window.matchMedia("(prefers-color-scheme: dark)").matches && localStorage.getItem("scheme") != "light" ? "dark" : localStorage.getItem("scheme") == "dark" ? "dark" : ""),
+            });
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
