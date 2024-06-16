@@ -16,15 +16,7 @@ namespace RazorNuke.Pages
             ViewData["Direction"] = direction;
             var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
             ViewData["SiteName"]  = siteName;
-            var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
-            if (direction == "rtl")
-            {
-                ViewData["SiteTitlePart"] = $"{siteName} {sep} ";
-            }
-            else
-            {
-                ViewData["SiteTitlePart"] = $" {sep} {siteName}";
-            }
+            
             bool loggedIn = !string.IsNullOrEmpty(Request.Cookies["Token"]);
             ViewData["LoggedIn"] = loggedIn;
             var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null, !loggedIn);
@@ -54,6 +46,21 @@ namespace RazorNuke.Pages
                 return NotFound();
             }
             CurrentPage = resCurrentPage.Result;
+            var sep = Configuration.GetSection("RazorNuke")["TitlePartsSeparator"];
+            if (CurrentPage.FullUrl == "/")
+            {
+                ViewData["Title"] = siteName;
+            }
+            else
+            if (direction == "rtl")
+            {
+                ViewData["Title"] = $"{siteName} {sep} {CurrentPage.FullTitle}";
+            }
+            else
+            {
+                ViewData["Title"] = $"{CurrentPage.FullTitle} {sep} {siteName}";
+            }
+
 
             var menuTopLevelPages = resMenuTopLevelPages.Result;
 
