@@ -281,6 +281,8 @@ namespace RazorNuke.Services.Implementation
 
         private void WriteSitemap(string filePath, List<string> urls)
         {
+            var baseUrl = Configuration.GetSection("RazorNuke")["BaseUrlNoLeadingSlash"];
+            if (baseUrl == null) return;
             if (File.Exists(filePath))
                 File.Delete(filePath);
             XNamespace ns = "http://www.sitemaps.org/schemas/sitemap/0.9";
@@ -294,7 +296,7 @@ namespace RazorNuke.Services.Implementation
                     "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"),
                 from url in urls
                 select new XElement(ns + "url",
-                    new XElement(ns + "loc", $"https://ganjoor.net{url}"))
+                    new XElement(ns + "loc", $"{baseUrl}{url}"))
                 )
             );
 
