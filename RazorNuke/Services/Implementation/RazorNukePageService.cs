@@ -243,6 +243,7 @@ namespace RazorNuke.Services.Implementation
                                     PageOrder = p.PageOrder,
                                     TitleInMenu = p.TitleInMenu,
                                     FullUrl = p.FullUrl,
+                                    ParentId = p.ParentId,
                                 }).ToArrayAsync();
 
                 RazorNukeMenuItem topLevel = new RazorNukeMenuItem()
@@ -266,6 +267,10 @@ namespace RazorNuke.Services.Implementation
             foreach (var child in parent.Children)
             {
                 _BuildMenu(src, child, child.Id);
+            }
+            if (!parent.Children.Any())
+            {
+                parent.Children = null;
             }
         }
 
