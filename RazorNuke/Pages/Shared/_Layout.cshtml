@@ -1,4 +1,5 @@
 ﻿@using RazorNuke.Models
+@using RazorNuke.Models.ViewModels
 <!DOCTYPE html>
 <html lang="@ViewData["Language"]" dir="@ViewData["Direction"]">
 <head>
@@ -15,12 +16,12 @@
         <p>@ViewData["FatalError"]</p>
         @RenderBody()
     }
-    @if (ViewData["MenuTopLevelPages"] == null)
+    @if (ViewData["Menu"] == null)
     {
-        <p>MenuTopLevelPages is null!</p>
+        <p>Menu is null!</p>
         @RenderBody()
     }
-    else if ((ViewData["MenuTopLevelPages"]  as RazorNukePage[])!.Length == 0)
+    else if ((ViewData["Menu"] as RazorNukeMenuItem[])!.Length == 0)
     {
         @RenderBody()
     }
@@ -39,7 +40,7 @@
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
-                            @foreach (var topLevelPage in ((ViewData["MenuTopLevelPages"] as RazorNukePage[])!))
+                            @foreach (var topLevelPage in ((ViewData["Menu"] as RazorNukeMenuItem[])!))
                             {
                                 @if(topLevelPage.Selected)
                                 {

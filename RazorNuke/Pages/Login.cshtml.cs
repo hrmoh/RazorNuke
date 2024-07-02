@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorNuke.Models;
+using RazorNuke.Models.ViewModels;
 using RSecurityBackend.Models.Auth.ViewModels;
 using RSecurityBackend.Models.Generic;
 using RSecurityBackend.Services;
@@ -19,7 +20,7 @@ namespace RazorNuke.Pages
             var direction = Configuration.GetSection("RazorNuke")["Direction"];
             ViewData["Direction"] = direction;
             ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
-            ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
+            ViewData["Menu"] = new RazorNukeMenuItem[] { };
             return Page();
         }
 

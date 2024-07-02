@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorNuke.Models;
+using RazorNuke.Models.ViewModels;
 using RazorNuke.Services;
 using RSecurityBackend.Models.Auth.ViewModels;
 using RSecurityBackend.Models.Generic;
@@ -20,7 +21,7 @@ namespace RazorNuke.Pages
             ViewData["Language"] = Configuration.GetSection("RazorNuke")["Language"];
             var direction = Configuration.GetSection("RazorNuke")["Direction"];
             ViewData["Direction"] = direction;
-            ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
+            ViewData["Menu"] = new RazorNukeMenuItem[] { };
             ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
             bool loggedIn = !string.IsNullOrEmpty(Request.Cookies["Token"]);
             if (string.IsNullOrEmpty(Request.Cookies["Token"]))
@@ -120,7 +121,7 @@ namespace RazorNuke.Pages
             ViewData["Direction"] = direction;
             var siteName = Configuration.GetSection("RazorNuke")["SiteName"];
 
-            ViewData["MenuTopLevelPages"] = new RazorNukePage[] { };
+            ViewData["Menu"] = new RazorNukeMenuItem[] { };
 
             if (string.IsNullOrEmpty(Request.Cookies["Token"]))
             {

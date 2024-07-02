@@ -19,20 +19,23 @@ namespace RazorNuke.Pages
             
             bool loggedIn = !string.IsNullOrEmpty(Request.Cookies["Token"]);
             ViewData["LoggedIn"] = loggedIn;
-            var resMenuTopLevelPages = await _pagesService.GetPageChildrenAsync(null, !loggedIn);
-            if (!string.IsNullOrEmpty(resMenuTopLevelPages.ExceptionString))
+            var resMenu = await _pagesService.GetMenuAsync();
+            if (!string.IsNullOrEmpty(resMenu.ExceptionString))
             {
-                ViewData["FatalError"] = resMenuTopLevelPages.ExceptionString;
+                ViewData["FatalError"] = resMenu.ExceptionString;
                 return Page();
             }
+
+            var menu = resMenu.Result;
 
             ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
 
 
-            if (resMenuTopLevelPages.Result!.Length == 0)
+            if (menu.Length == 0)
             {
                 return Page();
             }
+
 
 
             var resCurrentPage = await _pagesService.GetByFullUrlAsync(Request.Path, !loggedIn);
@@ -61,16 +64,13 @@ namespace RazorNuke.Pages
                 ViewData["Title"] = $"{CurrentPage.FullTitle} {sep} {siteName}";
             }
 
-
-            var menuTopLevelPages = resMenuTopLevelPages.Result;
-
-            foreach (var menuTopLevelPage in menuTopLevelPages)
+            foreach (var menuTopLevelPage in menu)
             {
-                if (menuTopLevelPage.FullUrl == CurrentPage.FullUrl)
-                    menuTopLevelPage.Selected = true;
+                menuTopLevelPage.Selected = menuTopLevelPage.FullUrl == CurrentPage.FullUrl;
             }
 
-            ViewData["MenuTopLevelPages"] = menuTopLevelPages;
+            ViewData["Menu"] = menu;
+
 
             ViewData["Id"] = CurrentPage.Id;
 
