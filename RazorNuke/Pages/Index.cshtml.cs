@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorNuke.Models;
 using RazorNuke.Services;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace RazorNuke.Pages
 {
@@ -31,7 +30,7 @@ namespace RazorNuke.Pages
             ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
 
 
-            if (menu.Length == 0)
+            if (menu.Children.Length == 0)
             {
                 return Page();
             }
@@ -62,11 +61,6 @@ namespace RazorNuke.Pages
             else
             {
                 ViewData["Title"] = $"{CurrentPage.FullTitle} {sep} {siteName}";
-            }
-
-            foreach (var menuTopLevelPage in menu)
-            {
-                menuTopLevelPage.Selected = menuTopLevelPage.FullUrl == CurrentPage.FullUrl;
             }
 
             ViewData["Menu"] = menu;

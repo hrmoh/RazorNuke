@@ -28,11 +28,6 @@
         public string FullUrl { get; set; }
 
         /// <summary>
-        /// selected
-        /// </summary>
-        public bool Selected { get; set; }
-
-        /// <summary>
         /// children
         /// </summary>
         public RazorNukeMenuItem[] Children { get; set; }

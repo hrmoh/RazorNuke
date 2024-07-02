@@ -41,7 +41,7 @@ namespace RazorNuke.Services
         /// get menu
         /// </summary>
         /// <returns></returns>
-        Task<RServiceResult<RazorNukeMenuItem[]?>> GetMenuAsync();
+        Task<RServiceResult<RazorNukeMenuItem?>> GetMenuAsync();
 
         /// <summary>
         /// get page by url

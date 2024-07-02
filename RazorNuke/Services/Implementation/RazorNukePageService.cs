@@ -54,7 +54,7 @@ namespace RazorNuke.Services.Implementation
                 _context.Add(page);
                 await _context.SaveChangesAsync();
 
-                _cachedMenuItems = null;
+                _cachedMenu = null;
                 await _RebuildSitemapAsync();
 
                 return new RServiceResult<RazorNukePage?>(page);
@@ -132,7 +132,7 @@ namespace RazorNuke.Services.Implementation
 
                 await _UpdateChildren(dbPage);
 
-                _cachedMenuItems = null;
+                _cachedMenu = null;
                 await _RebuildSitemapAsync();
 
                 return new RServiceResult<RazorNukePage?>(dbPage);
@@ -187,7 +187,7 @@ namespace RazorNuke.Services.Implementation
                 var dbPage = await _context.Pages.Where(p => p.Id == id).SingleAsync();
                 _context.Remove(dbPage);
                 await _context.SaveChangesAsync();
-                _cachedMenuItems = null;
+                _cachedMenu = null;
                 await _RebuildSitemapAsync();
                 return new RServiceResult<bool>(true);
             }
@@ -221,19 +221,19 @@ namespace RazorNuke.Services.Implementation
             }
         }
 
-        private static RazorNukeMenuItem[]? _cachedMenuItems = null;
+        private static RazorNukeMenuItem? _cachedMenu = null;
 
         /// <summary>
         /// get menu
         /// </summary>
         /// <returns></returns>
-        public async Task<RServiceResult<RazorNukeMenuItem[]?>> GetMenuAsync()
+        public async Task<RServiceResult<RazorNukeMenuItem?>> GetMenuAsync()
         {
             try
             {
-                if(_cachedMenuItems != null )
+                if(_cachedMenu != null )
                 {
-                    return new RServiceResult<RazorNukeMenuItem[]?>(_cachedMenuItems);
+                    return new RServiceResult<RazorNukeMenuItem?>(_cachedMenu);
                 }
                 var res1 = await _context.Pages.AsNoTracking()
                                 .Where(p => p.Published)
@@ -243,18 +243,20 @@ namespace RazorNuke.Services.Implementation
                                     PageOrder = p.PageOrder,
                                     TitleInMenu = p.TitleInMenu,
                                     FullUrl = p.FullUrl,
-                                    Selected = false,
                                 }).ToArrayAsync();
 
-                RazorNukeMenuItem top = new RazorNukeMenuItem();
-                _BuildMenu(res1, top, null);
-                _cachedMenuItems = top.Children;
-                return new RServiceResult<RazorNukeMenuItem[]?>(_cachedMenuItems);               
+                RazorNukeMenuItem topLevel = new RazorNukeMenuItem()
+                {
+                    Id = 0
+                };
+                _BuildMenu(res1, topLevel, null);
+                _cachedMenu = topLevel;
+                return new RServiceResult<RazorNukeMenuItem?>(_cachedMenu);               
 
             }
             catch (Exception exp)
             {
-                return new RServiceResult<RazorNukeMenuItem[]?>(null, exp.ToString());
+                return new RServiceResult<RazorNukeMenuItem?>(null, exp.ToString());
             }
         }
 

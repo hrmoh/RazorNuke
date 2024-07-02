@@ -21,7 +21,7 @@
         <p>Menu is null!</p>
         @RenderBody()
     }
-    else if ((ViewData["Menu"] as RazorNukeMenuItem[])!.Length == 0)
+    else if ((ViewData["Menu"] as RazorNukeMenuItem)!.Children == null)
     {
         @RenderBody()
     }
@@ -31,43 +31,11 @@
             <div class="site-branding">
                 <p class="main-title" itemprop="headline"><a class="navbar-brand" href="/">@ViewData["SiteName"]</a></p>
             </div>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container">
-                    
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            @foreach (var topLevelPage in ((ViewData["Menu"] as RazorNukeMenuItem[])!))
-                            {
-                                @if(topLevelPage.Selected)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark bg-dark text-white" href="@topLevelPage.FullUrl">@topLevelPage.TitleInMenu</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" href="@topLevelPage.FullUrl">@topLevelPage.TitleInMenu</a>
-                                    </li>
-                                }
-                            }
-                            @if (ViewData["LoggedIn"] != null && (ViewData["LoggedIn"] is bool) && (bool)ViewData["LoggedIn"]!)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" href="Editor?id=@ViewData["Id"]">Edit</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" href="Editor">+</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
+            <div class="menu-toggle" onclick="toggleMenu()">☰ منو</div>
+            <nav>
+                <partial name="_MenuPart" model=@(new _MenuPartModel{MenuItem = ViewData["Menu"] as RazorNukeMenuItem}) />
             </nav>
+
         </header>
         <div class="container">
             <main role="main" class="pb-3">
@@ -86,6 +54,16 @@
                         @Html.Raw(footerItem)
                 </span>
             }
+                @if (ViewData["LoggedIn"] != null && (ViewData["LoggedIn"] is bool) && (bool)ViewData["LoggedIn"]!)
+                {
+                    <span>
+                        <a href="/Editor?id=@ViewData["Id"]">ویرایش</a>
+                    </span>
+                    <span>
+                        <a href="/Editor">+</a>
+                    </span>
+                }
+
             </div>
         </footer>
     }

@@ -1,4 +1,18 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function toggleMenu() {
+    var nav = document.querySelector('nav ul');
+    if (nav.style.display === 'flex') {
+        nav.style.display = 'none';
+    } else {
+        nav.style.display = 'flex';
+    }
+}
 
-// Write your JavaScript code.
+function toggleSubMenu(event) {
+    event.preventDefault();
+    var submenu = event.target.nextElementSibling;
+    if (submenu.style.display === 'block') {
+        submenu.style.display = 'none';
+    } else {
+        submenu.style.display = 'block';
+    }
+}

@@ -77,4 +77,105 @@ body {
     box-sizing: border-box;
     font-family: Vazir;
 }
+nav a:hover{
+    color:white;
+}
+
+a.navbar-brand[b-mukpr99ilq] {
+    color:black;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background: #333; /* Dark background */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+    nav ul li {
+        position: relative;
+        display: inline-block;
+    }
+
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #fff; /* Light text */
+            background-color: #333; /* Dark background color */
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+            nav ul li a:hover {
+                background-color: #555; /* Lighter background color on hover */
+            }
+
+            nav ul li a:not(:hover) {
+                background-color: #333; /* Dark background color when not hovered */
+            }
+
+        nav ul li ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #333; /* Dark background for submenu */
+            padding: 0;
+            z-index: 1000;
+        }
+
+            nav ul li:hover > ul,
+            nav ul li ul li:hover > ul {
+                display: block;
+            }
+
+            nav ul li ul li {
+                display: block;
+                width: 200px;
+            }
+
+                nav ul li ul li ul {
+                    top: 0;
+                    right: 100%;
+                }
+
+        nav ul li a.current {
+            font-weight: bold; /* Bold for current item */
+        }
+
+.menu-toggle {
+    display: none;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        display: none; /* Hide menu on mobile by default */
+    }
+
+        nav ul li {
+            display: block;
+            width: 100%;
+        }
+
+            nav ul li ul {
+                position: static;
+                padding-right: 20px; /* Add indentation for submenus */
+            }
+
+                nav ul li ul ul {
+                    padding-right: 40px; /* Increase indentation for deeper submenus */
+                }
+
+    .menu-toggle {
+        display: block;
+    }
+}
 

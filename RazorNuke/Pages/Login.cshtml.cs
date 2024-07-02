@@ -20,7 +20,7 @@ namespace RazorNuke.Pages
             var direction = Configuration.GetSection("RazorNuke")["Direction"];
             ViewData["Direction"] = direction;
             ViewData["FooterItems"] = Configuration.GetSection("FooterItems").Get<string[]>();
-            ViewData["Menu"] = new RazorNukeMenuItem[] { };
+            ViewData["Menu"] = new RazorNukeMenuItem();
             return Page();
         }
 

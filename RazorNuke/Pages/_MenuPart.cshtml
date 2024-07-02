@@ -1,0 +1,38 @@
+﻿@model RazorNuke.Pages._MenuPartModel
+@if (Model.MenuItem.Id != 0 && Model.MenuItem.Children == null)
+{
+    <li>
+    @if (Model.MenuItem.FullUrl == Model.CurrentPageFullUrl)
+    {
+        <a href="@Model.MenuItem.FullUrl" class="current">@Model.MenuItem.TitleInMenu</a>
+    }
+    else
+    {
+        <a href="@Model.MenuItem.FullUrl">@Model.MenuItem.TitleInMenu</a>
+    }
+    </li>
+}
+@if (Model.MenuItem.Children != null)
+{
+    @if (Model.MenuItem.Id != 0 && Model.MenuItem.Children != null)
+    {
+        <li>
+        @if (Model.MenuItem.FullUrl == Model.CurrentPageFullUrl)
+        {
+            <a href="@Model.MenuItem.FullUrl" class="current" onclick="toggleSubMenu(event)">@Model.MenuItem.TitleInMenu</a>
+        }
+        else
+        {
+            <a href="@Model.MenuItem.FullUrl" onclick="toggleSubMenu(event)">@Model.MenuItem.TitleInMenu</a>
+        }
+        </li>
+    }
+    <ul>
+        @foreach (var menuItem in Model.MenuItem.Children)
+        {
+            <partial name="_MenuPart" model=@(new _MenuPartModel{MenuItem = menuItem}) />
+        }
+    </ul>
+}
+
+
