@@ -8,6 +8,11 @@
         public int Id { get; set; }
 
         /// <summary>
+        /// parent page id
+        /// </summary>
+        public int? ParentId { get; set; }
+
+        /// <summary>
         /// page order
         /// </summary>
         public int PageOrder { get; set; }
@@ -20,7 +25,7 @@
         /// <summary>
         /// full page url including parents urls
         /// </summary>
-        public required string FullUrl { get; set; }
+        public string FullUrl { get; set; }
 
         /// <summary>
         /// selected

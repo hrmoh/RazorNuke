@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RazorNuke.DbContext;
 using RazorNuke.Models;
+using RazorNuke.Models.ViewModels;
 using RSecurityBackend.Models.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -53,6 +54,7 @@ namespace RazorNuke.Services.Implementation
                 _context.Add(page);
                 await _context.SaveChangesAsync();
 
+                _cachedMenuItems = null;
                 await _RebuildSitemapAsync();
 
                 return new RServiceResult<RazorNukePage?>(page);
@@ -130,6 +132,7 @@ namespace RazorNuke.Services.Implementation
 
                 await _UpdateChildren(dbPage);
 
+                _cachedMenuItems = null;
                 await _RebuildSitemapAsync();
 
                 return new RServiceResult<RazorNukePage?>(dbPage);
@@ -184,6 +187,7 @@ namespace RazorNuke.Services.Implementation
                 var dbPage = await _context.Pages.Where(p => p.Id == id).SingleAsync();
                 _context.Remove(dbPage);
                 await _context.SaveChangesAsync();
+                _cachedMenuItems = null;
                 await _RebuildSitemapAsync();
                 return new RServiceResult<bool>(true);
             }
@@ -214,6 +218,52 @@ namespace RazorNuke.Services.Implementation
             catch (Exception exp)
             {
                 return new RServiceResult<RazorNukePage[]?>(null, exp.ToString());
+            }
+        }
+
+        private static RazorNukeMenuItem[]? _cachedMenuItems = null;
+
+        /// <summary>
+        /// get menu
+        /// </summary>
+        /// <returns></returns>
+        public async Task<RServiceResult<RazorNukeMenuItem[]?>> GetMenuAsync()
+        {
+            try
+            {
+                if(_cachedMenuItems != null )
+                {
+                    return new RServiceResult<RazorNukeMenuItem[]?>(_cachedMenuItems);
+                }
+                var res1 = await _context.Pages.AsNoTracking()
+                                .Where(p => p.Published)
+                                .Select(p => new RazorNukeMenuItem()
+                                {
+                                    Id = p.Id,
+                                    PageOrder = p.PageOrder,
+                                    TitleInMenu = p.TitleInMenu,
+                                    FullUrl = p.FullUrl,
+                                    Selected = false,
+                                }).ToArrayAsync();
+
+                RazorNukeMenuItem top = new RazorNukeMenuItem();
+                _BuildMenu(res1, top, null);
+                _cachedMenuItems = top.Children;
+                return new RServiceResult<RazorNukeMenuItem[]?>(_cachedMenuItems);               
+
+            }
+            catch (Exception exp)
+            {
+                return new RServiceResult<RazorNukeMenuItem[]?>(null, exp.ToString());
+            }
+        }
+
+        private void _BuildMenu(RazorNukeMenuItem[] src, RazorNukeMenuItem parent, int? parentId)
+        {
+            parent.Children = src.Where(p => p.ParentId == parentId).OrderBy(p => p.PageOrder).ToArray();
+            foreach (var child in parent.Children)
+            {
+                _BuildMenu(src, child, child.Id);
             }
         }
 

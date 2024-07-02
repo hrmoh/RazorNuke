@@ -1,4 +1,5 @@
 ﻿using RazorNuke.Models;
+using RazorNuke.Models.ViewModels;
 using RSecurityBackend.Models.Generic;
 
 namespace RazorNuke.Services
@@ -35,6 +36,12 @@ namespace RazorNuke.Services
         /// <param name="onlyPublished"></param>
         /// <returns></returns>
         Task<RServiceResult<RazorNukePage[]?>> GetPageChildrenAsync(int? parentId, bool onlyPublished);
+
+        /// <summary>
+        /// get menu
+        /// </summary>
+        /// <returns></returns>
+        Task<RServiceResult<RazorNukeMenuItem[]?>> GetMenuAsync();
 
         /// <summary>
         /// get page by url
