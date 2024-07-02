@@ -19,6 +19,8 @@ html {
 
 body {
   margin-bottom: 60px;
+  max-width:1100px;
+  margin:auto;
 }
 
 @font-face {
@@ -75,3 +77,4 @@ body {
     box-sizing: border-box;
     font-family: Vazir;
 }
+
